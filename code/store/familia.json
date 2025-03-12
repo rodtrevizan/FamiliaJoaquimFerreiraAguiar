@@ -188,6 +188,42 @@
         "paiId": "68ed99ff-6fd3-44c7-bd5e-42dfea2f3632",
         "pai": "Messias Cândida Trevizan"
       }
+    },
+    {
+      "id": "7328d857-3788-49b0-9948-09b306ac96f6",
+      "nome": "Lazinha",
+      "vivo": true,
+      "responsavel": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "paiId": "5f409e10-faff-4b7d-a0a1-47f39a01fa57",
+        "pai": "Joaquim Ferreira de Aguiar"
+      }
+    },
+    {
+      "id": "78710ad6-4f33-4e40-8c90-13fac6146ad5",
+      "nome": "Maria",
+      "vivo": false,
+      "responsavel": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "paiId": "5f409e10-faff-4b7d-a0a1-47f39a01fa57",
+        "pai": "Joaquim Ferreira de Aguiar"
+      }
+    },
+    {
+      "id": "0a805b9a-740f-4f4d-95ab-df3cf5a0e371",
+      "nome": "Meiry",
+      "vivo": true,
+      "responsavel": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "maeId": "78710ad6-4f33-4e40-8c90-13fac6146ad5",
+        "mae": "Maria"
+      }
     }
   ]
 }
