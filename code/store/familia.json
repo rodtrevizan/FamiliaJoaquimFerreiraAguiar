@@ -1,0 +1,42 @@
+{
+    "familia": [
+        {
+            "nome": "Messias",
+            "vivo": false,
+            "descendentes": [
+                {
+                    "nome": "Vera Lucia",
+                    "vivo": true,
+                    "descendentes": []
+                },
+                {
+                    "nome": "Mauricio",
+                    "vivo": false,
+                    "descendentes": [
+                        {
+                            "nome": "Rodrigo",
+                            "vivo": true,
+                            "descendentes": []
+                        },
+                        {
+                            "nome": "Lucas",
+                            "vivo": true,
+                            "descendentes": []
+                        },
+                        {
+                            "nome": "Julia",
+                            "vivo": true,
+                            "descendentes": []
+                        }
+                    ],
+                    "conjuge": "Ana Lucia"
+                }
+            ]
+        },
+        {
+            "nome": "Juan",
+            "vivo": true,
+            "descendentes": []
+        }
+    ]
+}
