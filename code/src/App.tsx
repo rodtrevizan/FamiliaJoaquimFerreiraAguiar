@@ -1,5 +1,7 @@
 import "./index.css";
 import { FamiliaManager } from "./components/FamiliaManager";
+import { Grid } from "@mui/material";
+import { PartilhaManager } from "./components/partilha/PartilhaManager";
 
 export function App() {
   return (
@@ -12,7 +14,14 @@ export function App() {
       </header>
       
       <main className="container mx-auto px-4 py-6">
-        <FamiliaManager />
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <FamiliaManager />
+          </Grid>
+          <Grid item xs={4}>
+            <PartilhaManager />
+          </Grid>
+        </Grid>
       </main>
     </div>
   );
