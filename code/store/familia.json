@@ -1,42 +1,44 @@
 {
-    "familia": [
-        {
-            "nome": "Messias",
-            "vivo": false,
-            "descendentes": [
-                {
-                    "nome": "Vera Lucia",
-                    "vivo": true,
-                    "descendentes": []
-                },
-                {
-                    "nome": "Mauricio",
-                    "vivo": false,
-                    "descendentes": [
-                        {
-                            "nome": "Rodrigo",
-                            "vivo": true,
-                            "descendentes": []
-                        },
-                        {
-                            "nome": "Lucas",
-                            "vivo": true,
-                            "descendentes": []
-                        },
-                        {
-                            "nome": "Julia",
-                            "vivo": true,
-                            "descendentes": []
-                        }
-                    ],
-                    "conjuge": "Ana Lucia"
-                }
-            ]
-        },
-        {
-            "nome": "Juan",
-            "vivo": true,
-            "descendentes": []
-        }
-    ]
+  "familia": [
+    {
+      "id": "df61c7ef-e725-4288-bc45-0f7eb92f5192",
+      "nome": "Rodrigo Trevizan",
+      "vivo": true,
+      "descendentes": [],
+      "contato": {
+        "telefone": "92 98111-5813"
+      },
+      "pais": {}
+    },
+    {
+      "id": "75e767e4-ebde-4e52-a3a9-342ff5302b22",
+      "nome": "Mauricio dos Reis Trevizan",
+      "vivo": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "maeId": "68ed99ff-6fd3-44c7-bd5e-42dfea2f3632",
+        "mae": "Messias Cândida Trevizan"
+      }
+    },
+    {
+      "id": "68ed99ff-6fd3-44c7-bd5e-42dfea2f3632",
+      "nome": "Messias Cândida Trevizan",
+      "vivo": true,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "paiId": "5f409e10-faff-4b7d-a0a1-47f39a01fa57",
+        "pai": "Joaquim Ferreira de Aguiar"
+      }
+    },
+    {
+      "id": "5f409e10-faff-4b7d-a0a1-47f39a01fa57",
+      "nome": "Joaquim Ferreira de Aguiar",
+      "vivo": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {}
+    }
+  ]
 }

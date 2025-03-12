@@ -4,14 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import type { Pessoa, FamiliaData } from "../types/familia";
 import { v4 as uuidv4 } from "uuid";
+import { Trash2, Lock, Unlock } from "lucide-react";
 
 export function FamiliaManager() {
   const [familiaData, setFamiliaData] = useState<FamiliaData>({ familia: [] });
@@ -24,6 +25,9 @@ export function FamiliaManager() {
     contato: {},
     pais: {}
   });
+  const [isDeleteEnabled, setIsDeleteEnabled] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [pessoaParaDeletar, setPessoaParaDeletar] = useState<Pessoa | null>(null);
 
   const salvarDados = async () => {
     try {
@@ -45,21 +49,37 @@ export function FamiliaManager() {
     }
   };
 
-  const adicionarPessoa = () => {
+  const adicionarPessoa = async () => {
     if (!novaPessoa.nome) return;
     
-    setFamiliaData(prev => ({
-      familia: [...prev.familia, novaPessoa as Pessoa]
-    }));
+    const novaFamilia = {
+      familia: [...familiaData.familia, novaPessoa as Pessoa]
+    };
     
-    setNovaPessoa({
-      id: uuidv4(),
-      nome: "",
-      vivo: true,
-      descendentes: [],
-      contato: {},
-      pais: {}
-    });
+    try {
+      const response = await fetch("/api/familia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(novaFamilia),
+      });
+      
+      if (!response.ok) throw new Error("Erro ao salvar dados");
+      
+      const data = await response.json();
+      setFamiliaData(data);
+      setNovaPessoa({
+        id: uuidv4(),
+        nome: "",
+        vivo: true,
+        descendentes: [],
+        contato: {},
+        pais: {}
+      });
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+    }
   };
 
   const editarPessoa = (pessoa: Pessoa) => {
@@ -67,22 +87,38 @@ export function FamiliaManager() {
     setNovaPessoa(pessoa);
   };
 
-  const atualizarPessoa = () => {
-    setFamiliaData(prev => ({
-      familia: prev.familia.map(p => 
-        p.id === editandoId ? novaPessoa as Pessoa : p
+  const atualizarPessoa = async (pessoaAtualizada: Pessoa) => {
+    const novaFamilia = {
+      familia: familiaData.familia.map(p => 
+        p.id === pessoaAtualizada.id ? pessoaAtualizada : p
       )
-    }));
-    
-    setEditandoId(null);
-    setNovaPessoa({
-      id: uuidv4(),
-      nome: "",
-      vivo: true,
-      descendentes: [],
-      contato: {},
-      pais: {}
-    });
+    };
+
+    try {
+      const response = await fetch("/api/familia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(novaFamilia),
+      });
+      
+      if (!response.ok) throw new Error("Erro ao atualizar dados");
+      
+      const data = await response.json();
+      setFamiliaData(data);
+      setEditandoId(null);
+      setNovaPessoa({
+        id: uuidv4(),
+        nome: "",
+        vivo: true,
+        descendentes: [],
+        contato: {},
+        pais: {}
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar:", error);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,6 +191,33 @@ export function FamiliaManager() {
     return pessoa?.nome || "Não encontrado";
   };
 
+  const deletarPessoa = async (pessoa: Pessoa) => {
+    if (deleteConfirmation !== `deletar ${pessoa.nome}`) return;
+    
+    const novaFamilia = {
+      familia: familiaData.familia.filter(p => p.id !== pessoa.id)
+    };
+
+    try {
+      const response = await fetch("/api/familia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(novaFamilia),
+      });
+      
+      if (!response.ok) throw new Error("Erro ao deletar dados");
+      
+      const data = await response.json();
+      setFamiliaData(data);
+      setPessoaParaDeletar(null);
+      setDeleteConfirmation("");
+    } catch (error) {
+      console.error("Erro ao deletar:", error);
+    }
+  };
+
   useEffect(() => {
     // Carregar dados iniciais
     fetch("/api/familia")
@@ -165,11 +228,24 @@ export function FamiliaManager() {
 
   return (
     <div className="space-y-4">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsDeleteEnabled(!isDeleteEnabled)}
+        className="mb-4"
+      >
+        {isDeleteEnabled ? (
+          <Unlock className="w-4 h-4 mr-2" />
+        ) : (
+          <Lock className="w-4 h-4 mr-2" />
+        )}
+        {isDeleteEnabled ? "Bloquear Exclusão" : "Desbloquear Exclusão"}
+      </Button>
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={(e) => { 
             e.preventDefault(); 
-            editandoId ? atualizarPessoa() : adicionarPessoa();
+            editandoId ? atualizarPessoa(novaPessoa as Pessoa) : adicionarPessoa();
           }} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -273,9 +349,6 @@ export function FamiliaManager() {
                   Cancelar Edição
                 </Button>
               )}
-              <Button type="button" onClick={salvarDados} variant="secondary">
-                Salvar Alterações
-              </Button>
             </div>
           </form>
         </CardContent>
@@ -305,6 +378,49 @@ export function FamiliaManager() {
                 <p>Pai: {getPessoaNome(pessoa.pais?.paiId)}</p>
                 <p>Mãe: {getPessoaNome(pessoa.pais?.maeId)}</p>
               </div>
+              {isDeleteEnabled && (
+                <div className="mt-4 border-t pt-4">
+                  {pessoaParaDeletar?.id === pessoa.id ? (
+                    <div className="space-y-2">
+                      <Input
+                        placeholder={`Digite "deletar ${pessoa.nome}" para confirmar`}
+                        value={deleteConfirmation}
+                        onChange={(e) => setDeleteConfirmation(e.target.value)}
+                        className="text-sm"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deletarPessoa(pessoa)}
+                          disabled={deleteConfirmation !== `deletar ${pessoa.nome}`}
+                        >
+                          Confirmar Exclusão
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setPessoaParaDeletar(null);
+                            setDeleteConfirmation("");
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setPessoaParaDeletar(pessoa)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Deletar
+                    </Button>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
