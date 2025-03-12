@@ -1,145 +1,96 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Checkbox,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  MenuItem,
+  InputLabel,
+  FormControl,
+  IconButton,
+  Typography,
+  Collapse
+} from "@mui/material";
 import type { Pessoa, FamiliaData } from "../types/familia";
 import { v4 as uuidv4 } from "uuid";
-import { Trash2, Lock, Unlock } from "lucide-react";
+import {
+  Delete as DeleteIcon,
+  LockOpen as UnlockIcon,
+  Lock as LockIcon,
+  WhatsApp as WhatsAppIcon,
+  Edit as EditIcon,
+  PersonAdd as PersonAddIcon,
+  Add as AddIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+  Info as InfoIcon,
+} from "@mui/icons-material";
 
-export function FamiliaManager() {
-  const [familiaData, setFamiliaData] = useState<FamiliaData>({ familia: [] });
-  const [editandoId, setEditandoId] = useState<string | null>(null);
-  const [novaPessoa, setNovaPessoa] = useState<Partial<Pessoa>>({
-    id: uuidv4(),
-    nome: "",
-    vivo: true,
-    descendentes: [],
-    contato: {},
-    pais: {}
+interface PessoaNode extends Pessoa {
+  filhos: PessoaNode[];
+}
+
+function construirArvoreGenealogica(pessoas: Pessoa[]): PessoaNode[] {
+  const pessoasMap = new Map<string, PessoaNode>();
+  pessoas.forEach(p => {
+    pessoasMap.set(p.id, { ...p, filhos: [] });
   });
-  const [isDeleteEnabled, setIsDeleteEnabled] = useState(false);
-  const [deleteConfirmation, setDeleteConfirmation] = useState("");
-  const [pessoaParaDeletar, setPessoaParaDeletar] = useState<Pessoa | null>(null);
 
-  const salvarDados = async () => {
-    try {
-      const response = await fetch("/api/familia", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(familiaData),
-      });
-      
-      if (!response.ok) throw new Error("Erro ao salvar dados");
-      
-      const data = await response.json();
-      setFamiliaData(data);
-      setEditandoId(null);
-    } catch (error) {
-      console.error("Erro ao salvar:", error);
+  const raizes: PessoaNode[] = [];
+
+  pessoasMap.forEach(pessoa => {
+    if (!pessoa.pais?.paiId && !pessoa.pais?.maeId) {
+      raizes.push(pessoa);
+    } else {
+      if (pessoa.pais?.paiId) {
+        const pai = pessoasMap.get(pessoa.pais.paiId);
+        if (pai) pai.filhos.push(pessoa);
+      }
+      if (pessoa.pais?.maeId && !pessoa.pais?.paiId) {
+        const mae = pessoasMap.get(pessoa.pais.maeId);
+        if (mae) mae.filhos.push(pessoa);
+      }
     }
-  };
+  });
 
-  const adicionarPessoa = async () => {
-    if (!novaPessoa.nome) return;
-    
-    const novaFamilia = {
-      familia: [...familiaData.familia, novaPessoa as Pessoa]
-    };
-    
-    try {
-      const response = await fetch("/api/familia", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(novaFamilia),
-      });
-      
-      if (!response.ok) throw new Error("Erro ao salvar dados");
-      
-      const data = await response.json();
-      setFamiliaData(data);
-      setNovaPessoa({
-        id: uuidv4(),
-        nome: "",
-        vivo: true,
-        descendentes: [],
-        contato: {},
-        pais: {}
-      });
-    } catch (error) {
-      console.error("Erro ao salvar:", error);
-    }
-  };
+  return raizes;
+}
 
-  const editarPessoa = (pessoa: Pessoa) => {
-    setEditandoId(pessoa.id);
-    setNovaPessoa(pessoa);
-  };
-
-  const atualizarPessoa = async (pessoaAtualizada: Pessoa) => {
-    const novaFamilia = {
-      familia: familiaData.familia.map(p => 
-        p.id === pessoaAtualizada.id ? pessoaAtualizada : p
-      )
-    };
-
-    try {
-      const response = await fetch("/api/familia", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(novaFamilia),
-      });
-      
-      if (!response.ok) throw new Error("Erro ao atualizar dados");
-      
-      const data = await response.json();
-      setFamiliaData(data);
-      setEditandoId(null);
-      setNovaPessoa({
-        id: uuidv4(),
-        nome: "",
-        vivo: true,
-        descendentes: [],
-        contato: {},
-        pais: {}
-      });
-    } catch (error) {
-      console.error("Erro ao atualizar:", error);
-    }
-  };
-
+const PessoaForm: React.FC<{
+  pessoa: Partial<Pessoa>;
+  setPessoa: React.Dispatch<React.SetStateAction<Partial<Pessoa>>>;
+  familiaData: FamiliaData;
+  editandoId: string | null;
+}> = ({ pessoa, setPessoa, familiaData, editandoId }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, checked } = e.target;
     
-    setNovaPessoa(prev => {
+    setPessoa(prev => {
       const newPessoa = { ...prev };
       
       if (name === 'telefone') {
         newPessoa.contato = { ...newPessoa.contato, telefone: value };
       } else {
-        newPessoa[name] = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
+        newPessoa[name] = type === "checkbox" ? checked : value;
       }
       
       return newPessoa;
     });
   };
 
-  const handlePaiSelect = (id: string) => {
+  const handlePaiSelect = (event: any) => {
+    const id = event.target.value;
     if (id === "nenhum") {
-      setNovaPessoa(prev => ({
+      setPessoa(prev => ({
         ...prev,
         pais: {
           ...prev.pais,
@@ -151,7 +102,7 @@ export function FamiliaManager() {
     }
 
     const pai = familiaData.familia.find(p => p.id === id);
-    setNovaPessoa(prev => ({
+    setPessoa(prev => ({
       ...prev,
       pais: {
         ...prev.pais,
@@ -161,9 +112,10 @@ export function FamiliaManager() {
     }));
   };
 
-  const handleMaeSelect = (id: string) => {
+  const handleMaeSelect = (event: any) => {
+    const id = event.target.value;
     if (id === "nenhum") {
-      setNovaPessoa(prev => ({
+      setPessoa(prev => ({
         ...prev,
         pais: {
           ...prev.pais,
@@ -175,7 +127,7 @@ export function FamiliaManager() {
     }
 
     const mae = familiaData.familia.find(p => p.id === id);
-    setNovaPessoa(prev => ({
+    setPessoa(prev => ({
       ...prev,
       pais: {
         ...prev.pais,
@@ -185,6 +137,424 @@ export function FamiliaManager() {
     }));
   };
 
+  return (
+    <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: '1fr 1fr', padding: '16px 0' }}>
+      <TextField
+        label="Nome"
+        name="nome"
+        value={pessoa.nome}
+        onChange={handleInputChange}
+        required
+        fullWidth
+      />
+      
+      <TextField
+        label="Telefone"
+        name="telefone"
+        value={pessoa.contato?.telefone || ""}
+        onChange={handleInputChange}
+        fullWidth
+      />
+
+      <FormControl fullWidth>
+        <InputLabel>Pai</InputLabel>
+        <Select
+          value={pessoa.pais?.paiId || "nenhum"}
+          onChange={handlePaiSelect}
+          label="Pai"
+        >
+          <MenuItem value="nenhum">Não informado</MenuItem>
+          {familiaData.familia
+            .filter(p => p.id !== editandoId)
+            .map(p => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.nome}
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
+
+      <FormControl fullWidth>
+        <InputLabel>Mãe</InputLabel>
+        <Select
+          value={pessoa.pais?.maeId || "nenhum"}
+          onChange={handleMaeSelect}
+          label="Mãe"
+        >
+          <MenuItem value="nenhum">Não informado</MenuItem>
+          {familiaData.familia
+            .filter(p => p.id !== editandoId)
+            .map(p => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.nome}
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="responsavel"
+            checked={pessoa.responsavel || false}
+            onChange={handleInputChange}
+          />
+        }
+        label="Responsável"
+        style={{ gridColumn: '1 / -1' }}
+      />
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="vivo"
+            checked={pessoa.vivo}
+            onChange={handleInputChange}
+          />
+        }
+        label="Vivo"
+        style={{ gridColumn: '1 / -1' }}
+      />
+    </div>
+  );
+};
+
+const FamiliaCard: React.FC<{ 
+  pessoa: PessoaNode; 
+  nivel: number;
+  onEdit: (pessoa: Pessoa) => void;
+  isEditEnabled: boolean;
+  onDelete: (pessoa: Pessoa) => void;
+  getPessoaNome: (id?: string) => string;
+  onAddDescendente: (pai: Pessoa) => void;
+}> = ({ 
+  pessoa, 
+  nivel, 
+  onEdit, 
+  isEditEnabled, 
+  onDelete,
+  getPessoaNome,
+  onAddDescendente
+}) => {
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [pessoaParaDeletar, setPessoaParaDeletar] = useState<Pessoa | null>(null);
+  const [expanded, setExpanded] = useState(true);
+  const [infoModalAberto, setInfoModalAberto] = useState(false);
+
+  const formatPhoneNumber = (phone?: string) => {
+    if (!phone) return "";
+    return phone.replace(/\D/g, "");
+  };
+
+  const getResponsaveis = (p: PessoaNode, visitados = new Set<string>()): string[] => {
+    if (visitados.has(p.id)) return [];
+    visitados.add(p.id);
+    
+    const responsaveis: string[] = [];
+    
+    for (const filho of p.filhos) {
+      if (filho.responsavel) {
+        responsaveis.push(filho.nome);
+        
+        // Se o filho responsável está morto, busca responsáveis dele também
+        if (!filho.vivo) {
+          const responsaveisFilho = getResponsaveis(filho, visitados);
+          responsaveis.push(...responsaveisFilho);
+        }
+      }
+    }
+    
+    return responsaveis;
+  };
+
+  const renderResponsaveis = () => {
+    const responsaveis = getResponsaveis(pessoa);
+    if (responsaveis.length > 0) {
+      return (
+        <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+          Responsável(is): {responsaveis.join(", ")}
+        </Typography>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div style={{ marginLeft: `${nivel * 16}px` }}>
+      <Card 
+        variant="outlined" 
+        style={{ 
+          marginBottom: '8px',
+          borderLeft: nivel > 0 ? `4px solid ${pessoa.vivo ? '#2196f3' : '#9e9e9e'}` : undefined,
+          opacity: pessoa.vivo ? 1 : 0.8,
+          borderColor: pessoa.responsavel ? '#4caf50' : undefined,
+          borderWidth: pessoa.responsavel ? '2px' : '1px'
+        }}
+      >
+        <CardContent style={{ padding: '8px 16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {pessoa.filhos.length > 0 && (
+                  <IconButton
+                    size="small"
+                    onClick={() => setExpanded(!expanded)}
+                    style={{ padding: 4 }}
+                  >
+                    {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                  </IconButton>
+                )}
+                <Typography 
+                  variant="h6" 
+                  component="span" 
+                  style={{ 
+                    fontSize: '1.1rem', 
+                    marginRight: '8px',
+                    color: pessoa.vivo ? 'inherit' : '#666'
+                  }}
+                >
+                  {pessoa.nome}
+                </Typography>
+                {!pessoa.vivo && (
+                  <Typography variant="body2" color="text.secondary">
+                    (†)
+                  </Typography>
+                )}
+                {pessoa.contato?.telefone && (
+                  <IconButton
+                    size="small"
+                    href={`https://wa.me/55${formatPhoneNumber(pessoa.contato.telefone)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="success"
+                  >
+                    <WhatsAppIcon fontSize="small" />
+                  </IconButton>
+                )}
+                <IconButton
+                  size="small"
+                  onClick={() => setInfoModalAberto(true)}
+                  color="primary"
+                >
+                  <InfoIcon fontSize="small" />
+                </IconButton>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {isEditEnabled && (
+                  <IconButton
+                    size="small"
+                    onClick={() => onAddDescendente(pessoa)}
+                    color="primary"
+                    title="Adicionar Descendente"
+                  >
+                    <PersonAddIcon fontSize="small" />
+                  </IconButton>
+                )}
+                {isEditEnabled && (
+                  pessoaParaDeletar?.id === pessoa.id ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <TextField
+                        size="small"
+                        placeholder={`deletar ${pessoa.nome}`}
+                        value={deleteConfirmation}
+                        onChange={(e) => setDeleteConfirmation(e.target.value)}
+                        style={{ width: '150px' }}
+                      />
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => {
+                          if (deleteConfirmation === `deletar ${pessoa.nome}`) {
+                            onDelete(pessoa);
+                            setPessoaParaDeletar(null);
+                            setDeleteConfirmation("");
+                          }
+                        }}
+                        disabled={deleteConfirmation !== `deletar ${pessoa.nome}`}
+                      >
+                        <CheckIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setPessoaParaDeletar(null);
+                          setDeleteConfirmation("");
+                        }}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </div>
+                  ) : (
+                    <IconButton
+                      size="small"
+                      onClick={() => setPessoaParaDeletar(pessoa)}
+                      color="error"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  )
+                )}
+              </div>
+            </div>
+            {!pessoa.vivo && renderResponsaveis()}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog
+        open={infoModalAberto}
+        onClose={() => setInfoModalAberto(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Informações - {pessoa.nome}</DialogTitle>
+        <DialogContent>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Typography>
+              <strong>Pai:</strong> {getPessoaNome(pessoa.pais?.paiId)}
+            </Typography>
+            <Typography>
+              <strong>Mãe:</strong> {getPessoaNome(pessoa.pais?.maeId)}
+            </Typography>
+            {pessoa.contato?.telefone && (
+              <Typography>
+                <strong>Telefone:</strong> {pessoa.contato.telefone}
+              </Typography>
+            )}
+            <Typography>
+              <strong>Status:</strong> {pessoa.vivo ? 'Vivo' : 'Falecido'}
+            </Typography>
+            {pessoa.responsavel && (
+              <Typography>
+                <strong>É responsável por:</strong> {getPessoaNome(pessoa.pais?.paiId)} e/ou {getPessoaNome(pessoa.pais?.maeId)}
+              </Typography>
+            )}
+          </div>
+        </DialogContent>
+        <DialogActions>
+          {isEditEnabled && (
+            <Button 
+              onClick={() => {
+                onEdit(pessoa);
+                setInfoModalAberto(false);
+              }} 
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Editar
+            </Button>
+          )}
+          <Button onClick={() => setInfoModalAberto(false)} color="inherit">
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {pessoa.filhos.length > 0 && (
+        <Collapse in={expanded}>
+          <div style={{ 
+            paddingLeft: '16px', 
+            borderLeft: '2px solid rgba(0,0,0,0.12)',
+            marginLeft: '8px'
+          }}>
+            {pessoa.filhos.map(filho => (
+              <FamiliaCard 
+                key={filho.id} 
+                pessoa={filho} 
+                nivel={nivel + 1}
+                onEdit={onEdit}
+                isEditEnabled={isEditEnabled}
+                onDelete={onDelete}
+                getPessoaNome={getPessoaNome}
+                onAddDescendente={onAddDescendente}
+              />
+            ))}
+          </div>
+        </Collapse>
+      )}
+    </div>
+  );
+};
+
+export function FamiliaManager() {
+  const [familiaData, setFamiliaData] = useState<FamiliaData>({ familia: [] });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [novaPessoa, setNovaPessoa] = useState<Partial<Pessoa>>({
+    id: uuidv4(),
+    nome: "",
+    vivo: true,
+    responsavel: false,
+    descendentes: [],
+    contato: {},
+    pais: {}
+  });
+  const [isEditEnabled, setIsEditEnabled] = useState(false);
+
+  const resetForm = () => {
+    setNovaPessoa({
+      id: uuidv4(),
+      nome: "",
+      vivo: true,
+      responsavel: false,
+      descendentes: [],
+      contato: {},
+      pais: {}
+    });
+    setEditandoId(null);
+  };
+
+  const salvarPessoa = async () => {
+    if (!novaPessoa.nome) return;
+    
+    const novaFamilia = {
+      familia: editandoId 
+        ? familiaData.familia.map(p => p.id === editandoId ? novaPessoa as Pessoa : p)
+        : [...familiaData.familia, novaPessoa as Pessoa]
+    };
+    
+    try {
+      const response = await fetch("/api/familia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(novaFamilia),
+      });
+      
+      if (!response.ok) throw new Error("Erro ao salvar dados");
+      
+      const data = await response.json();
+      setFamiliaData(data);
+      resetForm();
+      setModalAberto(false);
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+    }
+  };
+
+  const editarPessoa = (pessoa: Pessoa) => {
+    setEditandoId(pessoa.id);
+    setNovaPessoa(pessoa);
+    setModalAberto(true);
+  };
+
+  const adicionarDescendente = (pai: Pessoa) => {
+    setNovaPessoa({
+      id: uuidv4(),
+      nome: "",
+      vivo: true,
+      responsavel: false,
+      descendentes: [],
+      contato: {},
+      pais: {
+        paiId: pai.id,
+        pai: pai.nome
+      }
+    });
+    setModalAberto(true);
+  };
+
   const getPessoaNome = (id?: string) => {
     if (!id) return "Não informado";
     const pessoa = familiaData.familia.find(p => p.id === id);
@@ -192,8 +562,6 @@ export function FamiliaManager() {
   };
 
   const deletarPessoa = async (pessoa: Pessoa) => {
-    if (deleteConfirmation !== `deletar ${pessoa.nome}`) return;
-    
     const novaFamilia = {
       familia: familiaData.familia.filter(p => p.id !== pessoa.id)
     };
@@ -211,15 +579,12 @@ export function FamiliaManager() {
       
       const data = await response.json();
       setFamiliaData(data);
-      setPessoaParaDeletar(null);
-      setDeleteConfirmation("");
     } catch (error) {
       console.error("Erro ao deletar:", error);
     }
   };
 
   useEffect(() => {
-    // Carregar dados iniciais
     fetch("/api/familia")
       .then(res => res.json())
       .then(data => setFamiliaData(data))
@@ -227,202 +592,70 @@ export function FamiliaManager() {
   }, []);
 
   return (
-    <div className="space-y-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsDeleteEnabled(!isDeleteEnabled)}
-        className="mb-4"
-      >
-        {isDeleteEnabled ? (
-          <Unlock className="w-4 h-4 mr-2" />
-        ) : (
-          <Lock className="w-4 h-4 mr-2" />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => setIsEditEnabled(!isEditEnabled)}
+          startIcon={isEditEnabled ? <UnlockIcon /> : <LockIcon />}
+        >
+          {isEditEnabled ? "Bloquear Edição" : "Permitir Edição"}
+        </Button>
+        {isEditEnabled && (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              resetForm();
+              setModalAberto(true);
+            }}
+            startIcon={<AddIcon />}
+          >
+            Nova Pessoa
+          </Button>
         )}
-        {isDeleteEnabled ? "Bloquear Exclusão" : "Desbloquear Exclusão"}
-      </Button>
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={(e) => { 
-            e.preventDefault(); 
-            editandoId ? atualizarPessoa(novaPessoa as Pessoa) : adicionarPessoa();
-          }} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="nome">Nome</Label>
-                <Input
-                  id="nome"
-                  name="nome"
-                  value={novaPessoa.nome}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  id="telefone"
-                  name="telefone"
-                  value={novaPessoa.contato?.telefone || ""}
-                  onChange={handleInputChange}
-                />
-              </div>
+      </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="pai">Pai</Label>
-                <Select
-                  value={novaPessoa.pais?.paiId || "nenhum"}
-                  onValueChange={handlePaiSelect}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o pai" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nenhum">Não informado</SelectItem>
-                    {familiaData.familia
-                      .filter(p => p.id !== editandoId)
-                      .map(pessoa => (
-                        <SelectItem key={pessoa.id} value={pessoa.id}>
-                          {pessoa.nome}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
+      <Dialog 
+        open={modalAberto} 
+        onClose={() => setModalAberto(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          {editandoId ? "Editar Pessoa" : "Adicionar Pessoa"}
+        </DialogTitle>
+        <DialogContent>
+          <PessoaForm 
+            pessoa={novaPessoa}
+            setPessoa={setNovaPessoa}
+            familiaData={familiaData}
+            editandoId={editandoId}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModalAberto(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button onClick={salvarPessoa} variant="contained">
+            {editandoId ? "Atualizar" : "Adicionar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-              <div className="space-y-2">
-                <Label htmlFor="mae">Mãe</Label>
-                <Select
-                  value={novaPessoa.pais?.maeId || "nenhum"}
-                  onValueChange={handleMaeSelect}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a mãe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nenhum">Não informado</SelectItem>
-                    {familiaData.familia
-                      .filter(p => p.id !== editandoId)
-                      .map(pessoa => (
-                        <SelectItem key={pessoa.id} value={pessoa.id}>
-                          {pessoa.nome}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="col-span-2 flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="vivo"
-                  name="vivo"
-                  checked={novaPessoa.vivo}
-                  onChange={handleInputChange}
-                  className="h-4 w-4"
-                />
-                <Label htmlFor="vivo">Vivo</Label>
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button type="submit">
-                {editandoId ? "Atualizar Pessoa" : "Adicionar Pessoa"}
-              </Button>
-              {editandoId && (
-                <Button 
-                  type="button" 
-                  variant="destructive"
-                  onClick={() => {
-                    setEditandoId(null);
-                    setNovaPessoa({
-                      id: uuidv4(),
-                      nome: "",
-                      vivo: true,
-                      descendentes: [],
-                      contato: {},
-                      pais: {}
-                    });
-                  }}
-                >
-                  Cancelar Edição
-                </Button>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {familiaData.familia.map((pessoa) => (
-          <Card key={pessoa.id}>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-bold text-lg">{pessoa.nome}</h3>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => editarPessoa(pessoa)}
-                >
-                  ✏️ Editar
-                </Button>
-              </div>
-              {pessoa.contato?.telefone && (
-                <p className="text-sm text-gray-600">📞 {pessoa.contato.telefone}</p>
-              )}
-              <p className="text-sm text-gray-600">
-                Status: {pessoa.vivo ? "Vivo" : "Falecido"}
-              </p>
-              <div className="mt-2 text-sm">
-                <p>Pai: {getPessoaNome(pessoa.pais?.paiId)}</p>
-                <p>Mãe: {getPessoaNome(pessoa.pais?.maeId)}</p>
-              </div>
-              {isDeleteEnabled && (
-                <div className="mt-4 border-t pt-4">
-                  {pessoaParaDeletar?.id === pessoa.id ? (
-                    <div className="space-y-2">
-                      <Input
-                        placeholder={`Digite "deletar ${pessoa.nome}" para confirmar`}
-                        value={deleteConfirmation}
-                        onChange={(e) => setDeleteConfirmation(e.target.value)}
-                        className="text-sm"
-                      />
-                      <div className="flex gap-2">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deletarPessoa(pessoa)}
-                          disabled={deleteConfirmation !== `deletar ${pessoa.nome}`}
-                        >
-                          Confirmar Exclusão
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setPessoaParaDeletar(null);
-                            setDeleteConfirmation("");
-                          }}
-                        >
-                          Cancelar
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => setPessoaParaDeletar(pessoa)}
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Deletar
-                    </Button>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+      <div>
+        {construirArvoreGenealogica(familiaData.familia).map((pessoa) => (
+          <FamiliaCard 
+            key={pessoa.id} 
+            pessoa={pessoa} 
+            nivel={0}
+            onEdit={editarPessoa}
+            isEditEnabled={isEditEnabled}
+            onDelete={deletarPessoa}
+            getPessoaNome={getPessoaNome}
+            onAddDescendente={adicionarDescendente}
+          />
         ))}
       </div>
     </div>

@@ -7,12 +7,13 @@ export interface Pessoa {
     id: string;
     nome: string;
     vivo: boolean;
+    responsavel: boolean;
     dataNascimento?: string;
     foto?: string;
     contato?: Contato;
-    descendentes: Pessoa[];
+    descendentes: string[];
     conjuge?: string;
-    pais: {
+    pais?: {
         paiId?: string;
         maeId?: string;
         pai?: string;
