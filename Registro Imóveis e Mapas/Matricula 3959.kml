@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Matricula 3959.kml</name>
+	<StyleMap id="inline7">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#inline10</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#inline38</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="inline10">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Style id="inline38">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Placemark>
+		<name>Matricula 3959</name>
+		<styleUrl>#inline7</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-47.24478443495187,-20.81711115659759,0 -47.24341569781686,-20.81633611457795,0 -47.24214228265086,-20.81594284853918,0 -47.2410862098414,-20.81567755643035,0 -47.23986775853132,-20.8157430930335,0 -47.23902308876738,-20.81593823188768,0 -47.23908460566491,-20.81843054175603,0 -47.23731432318499,-20.81809766775602,0 -47.23684870648765,-20.81802392985815,0 -47.2365994955062,-20.82099036232395,0 -47.23923449309625,-20.82083559011804,0 -47.24122999503556,-20.8231591887111,0 -47.24365482965668,-20.82454266351658,0 -47.24427763161927,-20.82179430381566,0 -47.24527722545298,-20.82084584349254,0 -47.24545285890293,-20.81929116814581,0 -47.24656186758676,-20.81758159032481,0 -47.24478443495187,-20.81711115659759,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>

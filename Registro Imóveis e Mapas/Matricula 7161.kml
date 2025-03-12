@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Matricula 7161.kml</name>
+	<StyleMap id="inline0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#inline5</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#inline1</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="inline5">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Style id="inline1">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Placemark>
+		<name>Matricula 7161</name>
+		<styleUrl>#inline0</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-47.21964657348303,-20.81843222454918,0 -47.22045138981694,-20.81978642323066,0 -47.22133753333486,-20.82055178846212,0 -47.22214773055262,-20.82108347840423,0 -47.22239985767251,-20.82182940103484,0 -47.22246277564174,-20.82262690926427,0 -47.2236383622268,-20.82385679983122,0 -47.2244317573515,-20.82419601579905,0 -47.22518797401814,-20.82469997059427,0 -47.22616706952775,-20.82528678444394,0 -47.2269558481625,-20.82565255309873,0 -47.22768908442409,-20.82474838359199,0 -47.22977658220104,-20.82222967755408,0 -47.23227373197401,-20.81912091150176,0 -47.23030164975944,-20.81732865293336,0 -47.22956395053101,-20.81808711827143,0 -47.22629621261081,-20.82180162260509,0 -47.22405996066376,-20.8190758484659,0 -47.22293797154706,-20.81813072459812,0 -47.22181193134956,-20.81812400902568,0 -47.21968241281242,-20.81626594299411,0 -47.21910566063555,-20.81695626344818,0 -47.21964657348303,-20.81843222454918,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>

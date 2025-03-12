@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Matricula 2485.kml</name>
+	<Style id="inline39">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Style id="inline35">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="inline37">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#inline39</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#inline35</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>Matricula 2485</name>
+		<styleUrl>#inline37</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-47.20506002927844,-20.80908922626021,0 -47.20578985066923,-20.81035459895528,0 -47.20757928733267,-20.81047512735359,0 -47.20849997335747,-20.8108502447684,0 -47.20976328561832,-20.80854001848488,0 -47.21045060623646,-20.80881615221838,0 -47.21202136581059,-20.80807796153708,0 -47.21427823754692,-20.80700663542098,0 -47.21303003743961,-20.80498084359724,0 -47.21371572727885,-20.80274405426517,0 -47.21268366652468,-20.80072951670758,0 -47.21281906051667,-20.80033163195889,0 -47.21234862077439,-20.79861617955699,0 -47.2147296956374,-20.7947613826376,0 -47.21267906720225,-20.79391229800696,0 -47.20963349354712,-20.79450396175591,0 -47.20746811560461,-20.79613742392045,0 -47.21137030943036,-20.80156223941228,0 -47.21200604386591,-20.80341251123205,0 -47.21156032359654,-20.80432884604215,0 -47.21046476801322,-20.80534641421151,0 -47.20813730450114,-20.80611633219342,0 -47.20677850798197,-20.80731781993352,0 -47.20506002927844,-20.80908922626021,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>
