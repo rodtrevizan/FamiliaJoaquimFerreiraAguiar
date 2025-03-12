@@ -15,8 +15,6 @@ export interface Pessoa {
     pais?: {
         paiId?: string;
         maeId?: string;
-        pai?: string;
-        mae?: string;
     };
 }
 

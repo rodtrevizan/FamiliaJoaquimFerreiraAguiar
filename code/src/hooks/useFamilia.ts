@@ -63,8 +63,7 @@ export function useFamilia() {
         setNovaPessoa({
             ...getInitialPessoa(),
             pais: {
-                paiId: pai.id,
-                pai: pai.nome
+                paiId: pai.id
             }
         });
         setModalAberto(true);

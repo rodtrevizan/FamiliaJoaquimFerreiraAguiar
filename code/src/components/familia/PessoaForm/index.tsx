@@ -34,50 +34,22 @@ export const PessoaForm: React.FC<PessoaFormProps> = ({
 
   const handlePaiSelect = (event: any) => {
     const id = event.target.value;
-    if (id === "nenhum") {
-      setPessoa(prev => ({
-        ...prev,
-        pais: {
-          ...prev.pais,
-          paiId: undefined,
-          pai: undefined
-        }
-      }));
-      return;
-    }
-
-    const pai = familiaData.familia.find(p => p.id === id);
     setPessoa(prev => ({
       ...prev,
       pais: {
         ...prev.pais,
-        paiId: id,
-        pai: pai?.nome
+        paiId: id === "nenhum" ? undefined : id
       }
     }));
   };
 
   const handleMaeSelect = (event: any) => {
     const id = event.target.value;
-    if (id === "nenhum") {
-      setPessoa(prev => ({
-        ...prev,
-        pais: {
-          ...prev.pais,
-          maeId: undefined,
-          mae: undefined
-        }
-      }));
-      return;
-    }
-
-    const mae = familiaData.familia.find(p => p.id === id);
     setPessoa(prev => ({
       ...prev,
       pais: {
         ...prev.pais,
-        maeId: id,
-        mae: mae?.nome
+        maeId: id === "nenhum" ? undefined : id
       }
     }));
   };

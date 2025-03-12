@@ -395,7 +395,7 @@
     },
     {
       "id": "ff762e0d-18a8-4c8d-92f0-dfa84219345a",
-      "nome": "Augusta R. Do Nascimento Guiraldelli",
+      "nome": "Augusta Guiraldelli",
       "vivo": true,
       "responsavel": false,
       "descendentes": [],
@@ -403,7 +403,21 @@
       "pais": {
         "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
         "pai": "Maria"
-      }
+      },
+      "filhos": [
+        {
+          "id": "9bc8d237-a4f3-4524-ab04-93d05afd2da3",
+          "nome": "Joaquim Guiraldelli",
+          "vivo": true,
+          "responsavel": false,
+          "descendentes": [],
+          "contato": {},
+          "pais": {
+            "maeId": "ff762e0d-18a8-4c8d-92f0-dfa84219345a"
+          },
+          "filhos": []
+        }
+      ]
     },
     {
       "id": "0775b332-ae89-4563-aa4f-2059b88e2fb8",
@@ -428,6 +442,18 @@
         "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
         "pai": "Maria"
       }
+    },
+    {
+      "id": "9bc8d237-a4f3-4524-ab04-93d05afd2da3",
+      "nome": "Joaquim Guiraldelli",
+      "vivo": true,
+      "responsavel": true,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "maeId": "ff762e0d-18a8-4c8d-92f0-dfa84219345a"
+      },
+      "filhos": []
     }
   ]
 }
