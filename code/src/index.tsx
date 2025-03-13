@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import index from "./index.html";
-import { GET, POST } from "./api/familia";
+import { GET as getFamilia, POST as postFamilia } from "./api/familia";
+import { GET as getTarefas, POST as postTarefas } from "./api/tarefas-pendentes";
 
 const server = serve({
   routes: {
@@ -8,8 +9,13 @@ const server = serve({
     "/*": index,
 
     "/api/familia": {
-      GET,
-      POST,
+      GET: getFamilia,
+      POST: postFamilia,
+    },
+
+    "/api/tarefas-pendentes": {
+      GET: getTarefas,
+      POST: postTarefas,
     },
 
     "/api/hello": {

@@ -15,6 +15,7 @@ export function useFamilia() {
             nome: "",
             vivo: true,
             responsavel: false,
+            todo: false,
             descendentes: [],
             contato: {},
             pais: {}
@@ -29,10 +30,15 @@ export function useFamilia() {
     const salvarPessoa = async () => {
         if (!novaPessoa.nome) return;
 
+        const pessoaParaSalvar = {
+            ...novaPessoa,
+            todo: novaPessoa.todo || false
+        };
+
         const novaFamilia = {
             familia: editandoId
-                ? familiaData.familia.map(p => p.id === editandoId ? novaPessoa as Pessoa : p)
-                : [...familiaData.familia, novaPessoa as Pessoa]
+                ? familiaData.familia.map(p => p.id === editandoId ? pessoaParaSalvar as Pessoa : p)
+                : [...familiaData.familia, pessoaParaSalvar as Pessoa]
         };
 
         try {

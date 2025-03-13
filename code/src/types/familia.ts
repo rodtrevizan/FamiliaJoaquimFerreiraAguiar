@@ -7,6 +7,7 @@ export interface Pessoa {
     nome: string;
     vivo: boolean;
     responsavel: boolean;
+    todo?: boolean;
     dataNascimento?: string;
     foto?: string;
     contato?: Contato;

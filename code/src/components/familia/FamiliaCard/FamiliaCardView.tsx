@@ -1,14 +1,15 @@
 import React from 'react';
 import {
-    Card,
-    CardContent,
-    Typography,
-    IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Checkbox
 } from "@mui/material";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -16,8 +17,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import InfoIcon from '@mui/icons-material/Info';
 import type { Pessoa, PessoaNode } from "../../../types/familia";
 import { FamiliaCardChildren } from './FamiliaCardChildren';
+import { useTarefas } from '../../../contexts/TarefasContext';
 
 interface FamiliaCardViewProps {
   pessoa: PessoaNode;
@@ -50,6 +53,8 @@ export const FamiliaCardView: React.FC<FamiliaCardViewProps> = ({
   getPessoaNome,
   formatPhoneNumber
 }) => {
+  const { toggleTodo, getTodo } = useTarefas();
+
   return (
     <div style={{ marginLeft: `${nivel * 16}px`, marginBottom: '4px' }}>
       <Card 
@@ -66,73 +71,107 @@ export const FamiliaCardView: React.FC<FamiliaCardViewProps> = ({
             {pessoa.filhos.length > 0 && (
               <IconButton
                 size="small"
-                onClick={onToggleExpand}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleExpand();
+                }}
                 style={{ padding: 2 }}
               >
                 {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
               </IconButton>
             )}
             
+            {pessoa.vivo && (
+              <Checkbox
+                name="todo"
+                checked={getTodo(pessoa.id)}
+                size="small"
+                onClick={(e) => e.stopPropagation()}
+                onChange={(e) => toggleTodo(pessoa.id, e.target.checked)}
+                style={{ padding: 4 }}
+              />
+            )}
+
             <Typography 
               component="span" 
               sx={{ 
                 fontSize: '0.9rem',
                 color: pessoa.vivo ? 'inherit' : '#666',
-                fontWeight: 500
+                fontWeight: 500,
+                flexGrow: 1,
+                cursor: 'default'
               }}
+              onClick={(e) => e.stopPropagation()}
             >
               {pessoa.nome}
             </Typography>
 
             {!pessoa.vivo && (
-              <>
-                <Typography 
-                  component="span" 
-                  sx={{ 
-                    fontSize: '0.8rem',
-                    color: '#666',
-                    mx: 0.5
-                  }}
-                >
-                  †
-                </Typography>
-                {responsaveis.length > 0 && (
-                  <Typography 
-                    component="span" 
-                    sx={{ 
-                      fontSize: '0.75rem',
-                      color: '#4caf50',
-                      fontWeight: 500,
-                      ml: 1
-                    }}
-                  >
-                    (resp: {responsaveis.join(", ")})
-                  </Typography>
-                )}
-              </>
+              <Typography 
+                component="span" 
+                sx={{ 
+                  fontSize: '0.9rem',
+                  color: '#666'
+                }}
+              >
+                †
+              </Typography>
             )}
 
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               {pessoa.vivo && pessoa.contato?.telefone && (
                 <IconButton
                   size="small"
                   href={`https://wa.me/55${formatPhoneNumber(pessoa.contato.telefone)}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   style={{ padding: 2 }}
                 >
                   <WhatsAppIcon fontSize="small" />
                 </IconButton>
               )}
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleInfoModal();
+                }}
+                style={{ padding: 2 }}
+              >
+                <InfoIcon fontSize="small" />
+              </IconButton>
               {isEditEnabled && (
                 <>
-                  <IconButton size="small" onClick={() => onAddDescendente(pessoa)} style={{ padding: 2 }}>
+                  <IconButton 
+                    size="small" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddDescendente(pessoa);
+                    }} 
+                    style={{ padding: 2 }}
+                  >
                     <PersonAddIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" onClick={() => onEdit(pessoa)} style={{ padding: 2 }}>
+                  <IconButton 
+                    size="small" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(pessoa);
+                    }} 
+                    style={{ padding: 2 }}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" onClick={() => onDelete(pessoa)} color="error" style={{ padding: 2 }}>
+                  <IconButton 
+                    size="small" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(pessoa);
+                    }} 
+                    color="error" 
+                    style={{ padding: 2 }}
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </>
@@ -165,6 +204,11 @@ export const FamiliaCardView: React.FC<FamiliaCardViewProps> = ({
             <Typography>
               <strong>Status:</strong> {pessoa.vivo ? 'Vivo' : 'Falecido'}
             </Typography>
+            {pessoa.vivo && getTodo(pessoa.id) && (
+              <Typography>
+                <strong>TODO:</strong> Sim
+              </Typography>
+            )}
             {pessoa.responsavel && (
               <Typography>
                 <strong>É responsável por:</strong> {getPessoaNome(pessoa.pais?.paiId)} e/ou {getPessoaNome(pessoa.pais?.maeId)}
