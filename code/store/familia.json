@@ -237,7 +237,9 @@
       "vivo": true,
       "responsavel": true,
       "descendentes": [],
-      "contato": {},
+      "contato": {
+        "telefone": "35 9802-2329"
+      },
       "pais": {
         "maeId": "4a4a7574-9274-433f-9bef-b8fabaf82a39",
         "mae": "Therezinha de Aguiar Galdino"
@@ -276,11 +278,15 @@
       "vivo": true,
       "responsavel": true,
       "descendentes": [],
-      "contato": {},
+      "contato": {
+        "telefone": "35 99924-4252"
+      },
       "pais": {
         "paiId": "4039263f-f934-4613-aedb-2b86690cb64d",
         "pai": "Benedito (Zim)"
-      }
+      },
+      "filhos": [],
+      "todo": false
     },
     {
       "id": "d565068c-e560-4769-8051-5f4a8bdcca9f",
@@ -297,7 +303,7 @@
     },
     {
       "id": "2d5e5d1c-7049-4453-bebe-06eb9d1b179b",
-      "nome": "Edvaldo Orsi (Conjugê)",
+      "nome": "Edvaldo Orsi",
       "vivo": true,
       "responsavel": false,
       "descendentes": [],
@@ -305,10 +311,11 @@
         "telefone": "35 99918-3031"
       },
       "pais": {
-        "paiId": "7328d857-3788-49b0-9948-09b306ac96f6",
-        "pai": "Lazinha de Aguiar Orsi"
+        "pai": "Lazinha de Aguiar Orsi",
+        "maeId": "7328d857-3788-49b0-9948-09b306ac96f6"
       },
-      "filhos": []
+      "filhos": [],
+      "todo": false
     },
     {
       "id": "ec85ee44-f47d-4555-b648-18b853fe7088",
