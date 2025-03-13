@@ -292,20 +292,21 @@
       "id": "d565068c-e560-4769-8051-5f4a8bdcca9f",
       "nome": "Paula Angélica",
       "vivo": true,
-      "responsavel": true,
+      "responsavel": false,
       "descendentes": [],
       "contato": {},
       "pais": {
         "maeId": "7328d857-3788-49b0-9948-09b306ac96f6",
         "mae": "Lazinha de Aguiar Orsi"
       },
-      "filhos": []
+      "filhos": [],
+      "todo": false
     },
     {
       "id": "2d5e5d1c-7049-4453-bebe-06eb9d1b179b",
       "nome": "Edvaldo Orsi",
       "vivo": true,
-      "responsavel": false,
+      "responsavel": true,
       "descendentes": [],
       "contato": {
         "telefone": "35 99918-3031"
@@ -380,14 +381,82 @@
     {
       "id": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
       "nome": "Maria",
-      "vivo": true,
+      "vivo": false,
       "responsavel": false,
       "descendentes": [],
       "contato": {},
       "pais": {
         "paiId": "5f409e10-faff-4b7d-a0a1-47f39a01fa57",
         "pai": "Joaquim Ferreira de Aguiar"
-      }
+      },
+      "filhos": [
+        {
+          "id": "d89a595d-f380-4d16-8eb1-a5c217819708",
+          "nome": "Carlos Roberto Guiraldelli",
+          "vivo": true,
+          "responsavel": false,
+          "descendentes": [],
+          "contato": {},
+          "pais": {
+            "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
+            "pai": "Maria"
+          },
+          "filhos": []
+        },
+        {
+          "id": "ff762e0d-18a8-4c8d-92f0-dfa84219345a",
+          "nome": "Augusta Guiraldelli",
+          "vivo": true,
+          "responsavel": false,
+          "descendentes": [],
+          "contato": {},
+          "pais": {
+            "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
+            "pai": "Maria"
+          },
+          "filhos": [
+            {
+              "id": "9bc8d237-a4f3-4524-ab04-93d05afd2da3",
+              "nome": "Joaquim Guiraldelli",
+              "vivo": true,
+              "responsavel": true,
+              "descendentes": [],
+              "contato": {},
+              "pais": {
+                "maeId": "ff762e0d-18a8-4c8d-92f0-dfa84219345a"
+              },
+              "filhos": []
+            }
+          ]
+        },
+        {
+          "id": "0775b332-ae89-4563-aa4f-2059b88e2fb8",
+          "nome": "João Henrique Guiraldelli ",
+          "vivo": true,
+          "responsavel": false,
+          "descendentes": [],
+          "contato": {},
+          "pais": {
+            "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
+            "pai": "Maria"
+          },
+          "filhos": []
+        },
+        {
+          "id": "84e500ea-0669-4246-bb5c-37295c9b19cd",
+          "nome": "Paulo Ezio Guiraldelli",
+          "vivo": true,
+          "responsavel": false,
+          "descendentes": [],
+          "contato": {},
+          "pais": {
+            "paiId": "0a6676f1-39eb-4c4f-b4b4-a0e3268890dc",
+            "pai": "Maria"
+          },
+          "filhos": []
+        }
+      ],
+      "todo": false
     },
     {
       "id": "d89a595d-f380-4d16-8eb1-a5c217819708",
@@ -477,6 +546,18 @@
         "maeId": "ec85ee44-f47d-4555-b648-18b853fe7088"
       },
       "filhos": []
+    },
+    {
+      "id": "eaef9121-bea9-4b46-83c4-9b979ad096f1",
+      "nome": "Edvaldo Orsi (Conjugê)",
+      "vivo": true,
+      "responsavel": false,
+      "todo": false,
+      "descendentes": [],
+      "contato": {},
+      "pais": {
+        "paiId": "7328d857-3788-49b0-9948-09b306ac96f6"
+      }
     }
   ]
 }
