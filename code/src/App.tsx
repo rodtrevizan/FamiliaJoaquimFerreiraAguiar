@@ -10,7 +10,9 @@ export function App() {
       <div className="min-h-screen bg-background">
         <header className="border-b">
           <div className="container mx-auto px-4 py-4">
-            <h1 className="text-3xl font-bold">Árvore Genealógica</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Árvore Genealógica
+            </h1>
             <p className="text-muted-foreground">Gerencie os dados da sua família</p>
           </div>
         </header>
